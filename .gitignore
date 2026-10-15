@@ -5,3 +5,4 @@ VSCodium.exe
 /data/user-data
 /resources/app/node-compile-cache
 *.backup
+/data
