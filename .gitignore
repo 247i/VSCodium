@@ -1,1 +1,7 @@
 VSCodium.exe
+/data/user-data/Cache
+/data/user-data/DawnGraphiteCache
+/data/user-data/logs
+/data/user-data
+/resources/app/node-compile-cache
+*.backup
