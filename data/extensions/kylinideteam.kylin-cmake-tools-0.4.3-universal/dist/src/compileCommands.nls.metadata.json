@@ -1,0 +1,9 @@
+{
+	"messages": [
+		"Failed to load CMake cache while resolving compile commands: {0}"
+	],
+	"keys": [
+		"failed.to.load.cmake.cache"
+	],
+	"filePath": "src/compileCommands"
+}

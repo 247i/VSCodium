@@ -1,0 +1,26 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "18.17.0"
+        },
+        "modules": "commonjs",
+        "useBuiltIns": false,
+        "bugfixes": true,
+        "shippedProposals": true
+      }
+    ]
+  ],
+  "env": {
+    "development": {
+      "sourceMaps": "inline",
+      "retainLines": true
+    },
+    "production": {
+      "sourceMaps": false,
+      "compact": true
+    }
+  }
+}

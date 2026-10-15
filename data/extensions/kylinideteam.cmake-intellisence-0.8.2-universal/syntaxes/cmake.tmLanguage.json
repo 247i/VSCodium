@@ -1,0 +1,542 @@
+{
+  "fileTypes": [
+    "cmake",
+    "CMakeLists.txt"
+  ],
+  "name": "CMake",
+  "scopeName": "source.cmake",
+  "patterns": [
+    {
+      "include": "#bracket-comment"
+    },
+    {
+      "include": "#line-comment"
+    },
+    {
+      "include": "#bracket-argument"
+    },
+    {
+      "include": "#quoted-string"
+    },
+    {
+      "include": "#generator-expression"
+    },
+    {
+      "include": "#variable-reference"
+    },
+    {
+      "include": "#environment-variable-reference"
+    },
+    {
+      "include": "#cache-variable-reference"
+    },
+    {
+      "include": "#escape"
+    },
+    {
+      "include": "#scoped-condition-command"
+    },
+    {
+      "include": "#scoped-foreach-command"
+    },
+    {
+      "include": "#scoped-command-definition"
+    },
+    {
+      "include": "#scoped-set-command"
+    },
+    {
+      "include": "#command-control"
+    },
+    {
+      "include": "#conditional-control"
+    },
+    {
+      "include": "#loop-control"
+    },
+    {
+      "include": "#block-control"
+    },
+    {
+      "include": "#return-control"
+    },
+    {
+      "include": "#builtin-command"
+    },
+    {
+      "include": "#command-invocation"
+    },
+    {
+      "include": "#boolean"
+    },
+    {
+      "include": "#number"
+    },
+    {
+      "include": "#unquoted-argument"
+    }
+  ],
+  "repository": {
+    "bracket-comment": {
+      "name": "comment.block.bracket.cmake",
+      "begin": "#\\[(=*)\\[",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.begin.cmake"
+        }
+      },
+      "end": "\\]\\1\\]",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.end.cmake"
+        }
+      }
+    },
+    "line-comment": {
+      "name": "comment.line.number-sign.cmake",
+      "match": "#.*$"
+    },
+    "bracket-argument": {
+      "name": "string.quoted.other.cmake",
+      "begin": "\\[(=*)\\[",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.cmake"
+        }
+      },
+      "end": "\\]\\1\\]",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.cmake"
+        }
+      }
+    },
+    "escape": {
+      "name": "constant.character.escape.cmake",
+      "match": "\\\\(.|$)"
+    },
+    "quoted-string": {
+      "name": "string.quoted.double.cmake",
+      "begin": "\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.cmake"
+        }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#generator-expression"
+        },
+        {
+          "include": "#variable-reference"
+        },
+        {
+          "include": "#environment-variable-reference"
+        },
+        {
+          "include": "#cache-variable-reference"
+        }
+      ]
+    },
+    "variable-reference": {
+      "name": "variable.other.cmake",
+      "begin": "\\$\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.variable.begin.cmake"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.variable.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#variable-reference"
+        },
+        {
+          "include": "#environment-variable-reference"
+        },
+        {
+          "include": "#cache-variable-reference"
+        }
+      ]
+    },
+    "environment-variable-reference": {
+      "name": "variable.other.environment.cmake",
+      "begin": "\\$ENV\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.variable.begin.cmake"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.variable.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#variable-reference"
+        },
+        {
+          "include": "#environment-variable-reference"
+        },
+        {
+          "include": "#cache-variable-reference"
+        }
+      ]
+    },
+    "cache-variable-reference": {
+      "name": "variable.other.cache.cmake",
+      "begin": "\\$CACHE\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.variable.begin.cmake"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.variable.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#variable-reference"
+        },
+        {
+          "include": "#environment-variable-reference"
+        },
+        {
+          "include": "#cache-variable-reference"
+        }
+      ]
+    },
+    "generator-expression": {
+      "name": "meta.generator-expression.cmake",
+      "begin": "((?<!\\\\)\\$<)([A-Za-z_][A-Za-z0-9_]*)?",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.generator-expression.begin.cmake"
+        },
+        "2": {
+          "name": "support.function.generator-expression.cmake"
+        }
+      },
+      "end": ">",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.generator-expression.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#generator-expression"
+        },
+        {
+          "include": "#variable-reference"
+        },
+        {
+          "include": "#environment-variable-reference"
+        },
+        {
+          "include": "#cache-variable-reference"
+        },
+        {
+          "include": "#escape"
+        }
+      ]
+    },
+    "boolean": {
+      "name": "constant.language.boolean.cmake",
+      "match": "\\b(?i:ON|YES|TRUE|Y|OFF|NO|FALSE|N|IGNORE|NOTFOUND|[A-Za-z_][A-Za-z0-9_]*-NOTFOUND)\\b"
+    },
+    "number": {
+      "name": "constant.numeric.cmake",
+      "match": "(?<![A-Za-z0-9_.])[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?(?![A-Za-z0-9_.])"
+    },
+    "unquoted-argument": {
+      "match": "(?:\\$(?!\\{|ENV\\{|CACHE\\{|<)|[^\\s()#\"$\\\\])+"
+    },
+    "common-argument-patterns": {
+      "patterns": [
+        {
+          "include": "#bracket-comment"
+        },
+        {
+          "include": "#line-comment"
+        },
+        {
+          "include": "#bracket-argument"
+        },
+        {
+          "include": "#quoted-string"
+        },
+        {
+          "include": "#generator-expression"
+        },
+        {
+          "include": "#variable-reference"
+        },
+        {
+          "include": "#environment-variable-reference"
+        },
+        {
+          "include": "#cache-variable-reference"
+        },
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#boolean"
+        },
+        {
+          "include": "#number"
+        }
+      ]
+    },
+    "nested-parentheses": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.begin.cmake"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#nested-parentheses"
+        },
+        {
+          "include": "#common-argument-patterns"
+        },
+        {
+          "include": "#unquoted-argument"
+        }
+      ]
+    },
+    "conditional-operator": {
+      "name": "keyword.operator.wordlike.cmake",
+      "match": "\\b(?i:NOT|AND|OR|COMMAND|POLICY|TARGET|TEST|DEFINED|IN_LIST|EXISTS|IS_READABLE|IS_WRITABLE|IS_EXECUTABLE|IS_ABSOLUTE|IS_DIRECTORY|IS_SYMLINK|IS_NEWER_THAN|MATCHES|LESS|GREATER|EQUAL|LESS_EQUAL|GREATER_EQUAL|STRLESS|STRGREATER|STREQUAL|STRLESS_EQUAL|STRGREATER_EQUAL|VERSION_LESS|VERSION_GREATER|VERSION_EQUAL|VERSION_LESS_EQUAL|VERSION_GREATER_EQUAL|PATH_EQUAL)\\b"
+    },
+    "nested-condition-parentheses": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.begin.cmake"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#nested-condition-parentheses"
+        },
+        {
+          "include": "#common-argument-patterns"
+        },
+        {
+          "include": "#conditional-operator"
+        },
+        {
+          "include": "#unquoted-argument"
+        }
+      ]
+    },
+    "scoped-condition-command": {
+      "begin": "^\\s*\\b(?i:(if|elseif)|(while))\\b\\s*(\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.conditional.cmake"
+        },
+        "2": {
+          "name": "keyword.control.loop.cmake"
+        },
+        "3": {
+          "name": "punctuation.section.arguments.begin.cmake"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#nested-condition-parentheses"
+        },
+        {
+          "include": "#common-argument-patterns"
+        },
+        {
+          "include": "#conditional-operator"
+        },
+        {
+          "include": "#unquoted-argument"
+        }
+      ]
+    },
+    "scoped-foreach-command": {
+      "begin": "^\\s*\\b(?i:(foreach))\\b\\s*(\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.loop.cmake"
+        },
+        "2": {
+          "name": "punctuation.section.arguments.begin.cmake"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#nested-parentheses"
+        },
+        {
+          "include": "#common-argument-patterns"
+        },
+        {
+          "name": "keyword.other.cmake",
+          "match": "\\b(?i:IN|RANGE|ZIP_LISTS|LISTS|ITEMS)\\b"
+        },
+        {
+          "include": "#unquoted-argument"
+        }
+      ]
+    },
+    "scoped-command-definition": {
+      "begin": "^\\s*\\b(?i:(function)|(macro))\\b\\s*(\\()\\s*([A-Za-z_][A-Za-z0-9_]*)?",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command.cmake"
+        },
+        "2": {
+          "name": "keyword.control.command.cmake"
+        },
+        "3": {
+          "name": "punctuation.section.arguments.begin.cmake"
+        },
+        "4": {
+          "name": "entity.name.function.cmake"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#nested-parentheses"
+        },
+        {
+          "name": "variable.parameter.cmake",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+        },
+        {
+          "include": "#common-argument-patterns"
+        },
+        {
+          "include": "#unquoted-argument"
+        }
+      ]
+    },
+    "scoped-set-command": {
+      "begin": "\\b(?i:(set|unset))\\b\\s*(\\()\\s*(?:((?i:CACHE)\\{([^}]*)\\})|((?i:ENV)\\{([^}]*)\\})|([A-Za-z_][A-Za-z0-9_]*))?",
+      "beginCaptures": {
+        "1": {
+          "name": "support.function.cmake"
+        },
+        "2": {
+          "name": "punctuation.section.arguments.begin.cmake"
+        },
+        "3": {
+          "name": "variable.other.cache.cmake"
+        },
+        "5": {
+          "name": "variable.other.environment.cmake"
+        },
+        "7": {
+          "name": "variable.other.cmake"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.arguments.end.cmake"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#nested-parentheses"
+        },
+        {
+          "include": "#common-argument-patterns"
+        },
+        {
+          "name": "keyword.other.cmake",
+          "match": "\\b(?i:CACHE|PARENT_SCOPE|FORCE|TYPE|HELP|VALUE|BOOL|STRING|FILEPATH|PATH|INTERNAL)\\b"
+        },
+        {
+          "include": "#unquoted-argument"
+        }
+      ]
+    },
+    "command-control": {
+      "name": "keyword.control.command.cmake",
+      "match": "^\\s*\\b(?i:function|endfunction|macro|endmacro)\\b"
+    },
+    "conditional-control": {
+      "name": "keyword.control.conditional.cmake",
+      "match": "^\\s*\\b(?i:if|elseif|else|endif)\\b"
+    },
+    "loop-control": {
+      "name": "keyword.control.loop.cmake",
+      "match": "^\\s*\\b(?i:foreach|endforeach|while|endwhile|break|continue)\\b"
+    },
+    "block-control": {
+      "name": "keyword.control.block.cmake",
+      "match": "^\\s*\\b(?i:block|endblock)\\b"
+    },
+    "return-control": {
+      "name": "keyword.control.return.cmake",
+      "match": "^\\s*\\b(?i:return)\\b"
+    },
+    "builtin-command": {
+      "name": "support.function.cmake",
+      "match": "\\b(?i:CMAKE_FORCE_Fortran_COMPILER|DetermineVSServicePack|ExternalData_Add_Target|ExternalProject_Add|ExternalProject_Add_Step|ExternalProject_Add_StepDependencies|ExternalProject_Add_StepTargets|ExternalProject_Get_Property|FetchContent_Declare|FetchContent_GetProperties|FetchContent_MakeAvailable|FetchContent_Populate|FetchContent_SetPopulated|FortranCInterface_HEADER|FortranCInterface_VERIFY|GNUInstallDirs_get_absolute_install_dir|ProcessorCount|Subversion_WC_INFO|Subversion_WC_LOG|add_compile_definitions|add_compile_options|add_custom_command|add_custom_target|add_definitions|add_dependencies|add_executable|add_feature_info|add_file_dependencies|add_jar|add_library|add_link_options|add_subdirectory|add_test|android_add_test_data|aux_source_directory|block|break|build_command|build_name|check_c_compiler_flag|check_c_source_compiles|check_c_source_runs|check_compiler_flag|check_cxx_compiler_flag|check_cxx_source_compiles|check_cxx_source_runs|check_cxx_symbol_exists|check_fortran_compiler_flag|check_fortran_source_compiles|check_fortran_source_runs|check_function_exists|check_ipo_supported|check_language|check_linker_flag|check_objc_compiler_flag|check_objc_source_compiles|check_objc_source_runs|check_objcxx_compiler_flag|check_objcxx_source_compiles|check_objcxx_source_runs|check_pie_supported|check_prototype_definition|check_required_components|check_source_compiles|check_source_runs|check_symbol_exists|check_type_size|clear_bundle_keys|cmake_add_fortran_subdirectory|cmake_dependent_option|cmake_diagnostic|cmake_file_api|cmake_host_system_information|cmake_instrumentation|cmake_language|cmake_minimum_required|cmake_parse_arguments|cmake_path|cmake_pkg_config|cmake_policy|cmake_pop_check_state|cmake_print_properties|cmake_print_variables|cmake_push_check_state|cmake_reset_check_state|configure_file|configure_package_config_file|continue|copy_and_fixup_bundle|copy_resolved_framework_into_bundle|copy_resolved_item_into_bundle|cpack_add_component|cpack_add_component_group|cpack_add_install_type|cpack_configure_downloads|cpack_ifw_add_package_resources|cpack_ifw_add_repository|cpack_ifw_configure_file|cpack_ifw_update_repository|create_javadoc|create_javah|create_test_sourcelist|csharp_get_dependentupon_name|csharp_get_filename_key_base|csharp_get_filename_keys|csharp_set_designer_cs_properties|csharp_set_windows_forms_properties|csharp_set_xaml_cs_properties|ctest_build|ctest_configure|ctest_coverage|ctest_coverage_collect_gcov|ctest_empty_binary_directory|ctest_memcheck|ctest_read_custom_files|ctest_run_script|ctest_sleep|ctest_start|ctest_submit|ctest_test|ctest_update|ctest_upload|cuda_add_cublas_to_target|cuda_add_cufft_to_target|cuda_add_executable|cuda_add_library|cuda_build_clean_target|cuda_compile|cuda_compile_cubin|cuda_compile_fatbin|cuda_compile_ptx|cuda_compute_separable_compilation_object_file_name|cuda_include_directories|cuda_link_separable_compilation_objects|cuda_select_nvcc_arch_flags|cuda_wrap_srcs|define_property|discover_tests|doxygen_add_docs|else|elseif|enable_language|enable_testing|endblock|endforeach|endfunction|endif|endmacro|endwhile|env_module|env_module_avail|env_module_list|env_module_swap|exec_program|execute_process|export|export_jars|export_library_dependencies|feature_summary|file|find_dependency|find_file|find_jar|find_library|find_package|find_package_check_version|find_package_handle_standard_args|find_package_message|find_path|find_program|fixup_bundle|fixup_bundle_item|fltk_wrap_ui|foreach|function|generate_apple_architecture_selection_file|generate_apple_platform_selection_file|generate_export_header|get_bundle_all_executables|get_bundle_and_executable|get_bundle_keys|get_bundle_main_executable|get_cmake_property|get_directory_property|get_dotapp_dir|get_filename_component|get_item_key|get_property|get_source_file_property|get_target_property|get_test_property|gtest_add_tests|gtest_discover_tests|if|include|include_directories|include_external_msproject|include_guard|include_regular_expression|install|install_files|install_jar|install_jar_exports|install_jni_symlink|install_programs|install_targets|link_directories|link_libraries|list|load_cache|load_command|macro|make_directory|mark_as_advanced|math|matlab_add_mex|matlab_add_unit_test|matlab_extract_all_installed_versions_from_registry|matlab_get_all_valid_matlab_roots_from_registry|matlab_get_mex_suffix|matlab_get_release_name_from_version|matlab_get_version_from_matlab_run|matlab_get_version_from_release_name|message|option|output_required_files|pkg_check_modules|pkg_get_variable|pkg_search_module|print_disabled_features|print_enabled_features|project|protobuf_generate|protobuf_generate_cpp|protobuf_generate_python|qt_wrap_cpp|qt_wrap_ui|remove|remove_definitions|return|select_library_configurations|separate_arguments|set|set_bundle_key_values|set_directory_properties|set_feature_info|set_package_info|set_package_properties|set_property|set_source_files_properties|set_target_properties|set_tests_properties|site_name|source_group|squish_add_test|string|subdir_depends|subdirs|swig_add_library|swig_link_libraries|target_compile_definitions|target_compile_features|target_compile_options|target_include_directories|target_link_directories|target_link_libraries|target_link_options|target_precompile_headers|target_sources|test_big_endian|try_compile|try_run|unset|use_mangled_mesa|utility_source|variable_requires|variable_watch|verify_app|verify_bundle_prerequisites|verify_bundle_symlinks|while|write_basic_package_version_file|write_compiler_detection_header|write_file|xctest_add_bundle|xctest_add_test)\\b(?=\\s*\\()"
+    },
+    "command-invocation": {
+      "name": "entity.name.function.cmake",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b(?=\\s*\\()"
+    }
+  }
+}

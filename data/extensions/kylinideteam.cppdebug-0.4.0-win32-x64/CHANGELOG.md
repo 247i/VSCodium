@@ -1,0 +1,42 @@
+# Change Log
+
+## v0.4.0
+
+- 添加两个命令：`cppdebug.cppdebug.attachToProcess` 和 `cppdebug.attachToProcessWithConfiguration`
+- 添加更多的 configurationSnippets，覆盖常用调试场景
+
+## v0.3.0
+
+- 内置 gdb-pretty-printers for Qt, 美化打印比 Natvis 性能更好
+- 扩展不再内置 Qt5.Natvis 文件
+- 添加配置项：`cppdebug.enablePrettyPrinting` 和 `cppdebug.autoLoadPrettyPrinters`
+- 更新 MIEngine
+
+## v0.2.0
+
+- update MIEngine to latest version
+
+## v0.1.0
+
+- 修复注册命令和 ms-vscode.cpptools 冲突的问题：https://gitee.com/quanzhuo/cpp-debug/issues/ICQN93
+
+## v0.0.9
+
+- 内置 qt5.natvis 文件
+
+## v0.0.8
+- package.json 中添加 Kylin-IDE 支持的特有字段
+
+## v0.0.7
+
+- 更新 README
+- 更新 package.json 中的部分字段
+
+## v0.0.5
+
+- 修改图标
+- 更改 package.json 中的部分字段
+
+## v0.0.4
+
+- 集成 MIEngine， 发布版本 v0.0.4

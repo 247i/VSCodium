@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.CodeAnalysis.ExternalAccess.Extensions</name>
+    </assembly>
+    <members>
+        <member name="P:Microsoft.CodeAnalysis.ExternalAccess.Extensions.ExternalAccessExtensionsResources.Cannot_create_0">
+            <summary>Cannot create {0}.</summary>
+        </member>
+        <member name="P:Microsoft.CodeAnalysis.ExternalAccess.Extensions.ExternalAccessExtensionsResources.Missing_document_file_path">
+            <summary>Missing document file path</summary>
+        </member>
+        <member name="P:Microsoft.CodeAnalysis.ExternalAccess.Extensions.ExternalAccessExtensionsResources.The_message_type_0_is_not_assignable_to_1">
+            <summary>The message type {0} is not assignable to {1}.</summary>
+        </member>
+        <member name="P:Microsoft.CodeAnalysis.ExternalAccess.Extensions.ExternalAccessExtensionsResources.Type_0_implements_interface_1_more_than_once">
+            <summary>Type {0} implements interface {1} more than once.</summary>
+        </member>
+        <member name="P:Microsoft.CodeAnalysis.ExternalAccess.Extensions.ExternalAccessExtensionsResources.The_handler_of_type_0_must_have_a_full_name">
+            <summary>The handler of type {0} must have a full name.</summary>
+        </member>
+        <member name="P:Microsoft.CodeAnalysis.ExternalAccess.Extensions.ExternalAccessExtensionsResources.The_interface_0_does_not_contain_a_method_named_1">
+            <summary>The interface {0} does not contain a method named {1}.</summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,8 @@
+{
+  "extends": "@tomjs/tsconfig/node.json",
+  "compilerOptions": {
+    "composite": true,
+    "moduleResolution": "bundler"
+  },
+  "include": ["extension", "typings", "vite.config.ts"]
+}

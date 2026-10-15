@@ -1,0 +1,172 @@
+# Change Log
+
+## v0.8.2
+
+Bug Fixes:
+
+* 修复 CMake 正则字符串中转义的 `$<` 被误高亮为生成器表达式
+* 修复 [#18](https://github.com/quanzhuo/cmake-intellisence/issues/18)：`include(Sub/Mod)` 无法通过 `CMAKE_MODULE_PATH` 定位嵌套模块；同时支持带路径和点号的模块名
+* 修复 `include(${MODULE_NAME})` 展开为嵌套模块名时，定义跳转、文档链接和依赖索引无法正确定位模块
+* 修复被 `include()` 的文件中，相对 `include()`、`add_subdirectory()` 路径及相关诊断错误地使用文件所在目录；现在按调用方的 `CMAKE_CURRENT_SOURCE_DIR` 解析，并保留 `CMAKE_CURRENT_LIST_DIR` 的原有含义
+* 修复内置模块文档链接可能指向同名目录的问题
+
+Improvements:
+
+* 索引时复用文件的当前源目录，减少大型项目中重复遍历依赖图的开销
+
+## v0.8.1
+
+Improvements:
+
+* 工作区存在多个文件夹时，避免多次执行 pkg-config 命令
+* 修复 wordPattern 中的字符集，确保正确匹配
+* 扫描 cmake文件时忽略构建目录
+* 跳转到定义增强
+* 高亮重构
+
+## v0.8.0
+
+Bug Fixes:
+
+* [#12](https://github.com/quanzhuo/cmake-intellisence/issues/12): windows vscode 提示 spawn EINVAL
+
+Improvements:
+
+* 性能提升
+
+## v0.7.2
+
+Bug Fixes:
+
+* [#11](https://github.com/quanzhuo/cmake-intellisence/issues/11): improve link resolution for source directories in getLinksFromArguments
+* resolve Windows execution issues for .bat and .cmd files in execFilePromise
+* improve cache eviction logic for cmakeHelpCache based on error codes
+* enhance CMake environment initialization with built-in entries loading stats
+
+
+
+## v0.7.1
+
+Bug Fixes:
+
+* Fix issue [#8](https://github.com/quanzhuo/cmake-intellisence/issues/8): https://github.com/quanzhuo/cmake-intellisence/issues/8
+
+## v0.7.0
+
+Improvements:
+
+* 多工作区支持
+* 补全体验提升
+
+## v0.6.0
+
+Improvements:
+
+* 变量补全体验提升
+* 悬浮文档显示增强
+* 签名帮助增强
+
+## v0.5.0
+
+Improvements:
+
+* 维护全局符号索引，性能提升
+* 符号重命名
+* 工作区符号搜索
+* 查找引用
+
+## v0.4.0
+
+Improvements:
+
+* 新增对 CMake 内置模块的补全支持
+
+## v0.3.5
+
+Bug Fixes:
+
+* 修复在 Windows 上，如果没有安装 msvc，获取 CMake 模块路径时会导致错误
+
+## v0.3.4
+
+Improvements:
+
+* 在 if, elseif, while 命令中提供变量补全
+* 通过 cmake --system-information 获取 cmake 模块路径
+
+Bug Fixes:
+
+* 修复变量，属性补全列表中带有重复项的问题，并更新单元测试
+
+## v0.3.3
+
+* 修复变量解析逻辑，确保正确处理变量位置并添加相关单元测试
+* 语法重构，使之更加可读
+* 修复文件补全时导致的崩溃问题
+* 更新 README.md，添加开发环境设置说明
+
+## v0.3.2
+
+* 补全功能，使用在 builtin-cmds.json 中预定义的关键字
+* 更新文档链接信息，针对 add_subdirectory 命令，tooltip 指向文件，而不是目录
+* Fix [#1](https://github.com/quanzhuo/cmake-intellisence/issues/1): ()不在同一行的时候，执行格式化，)会自动格式化到行首
+
+## v0.3.1
+
+* 修复多行注释解析错误的问题
+* 修复 Lexer 中存在的问题
+* 添加更多的补全片段
+* 更新语言配置，添加尖括号自动闭合
+* 当光标位于 ${} 中时，执行变量补全
+
+## v0.3.0
+
+* 补全支持用户定义命令， 目标，属性
+* add 'completionItem/resolve' support
+* support pkg_check_modules completion
+* show complete documentation for command when hover
+* Add a setting to set path to pkg-config command
+* use markdown format in Hover
+* Fix [#2](https://github.com/quanzhuo/cmake-intellisence/issues/2): Unquoted arguments can contain quotes
+
+## v0.2.2
+
+* 参数补全支持 CMake 内置变量
+* 重构补全逻辑，增加对 CMake 策略的补全
+* 缓存 AST， 避免不必要的 AST 构建
+* 修复参数 hover 报错的问题
+* 增加设置项，可以设置 CMake 内置模块的路径
+* 重构签名补全功能
+
+## v0.2.1
+
+* 添加 document link 特性
+* 添加 shutdown 事件处理，清理资源
+* 添加 block/endblock 等新命令
+* 补全时显示文档
+* 支持文件补全， 模块补全(find_package)
+* 修复参数补全时，识别参数错误的问题
+
+## v0.2.0
+
+* 升级 antlr4 到 4.13.2， 使用 ts target
+* 更新 CMake 语法
+* 修复关键字(如 ’include‘) 不能作为参数的问题
+* 根据上下文信息补全命令和参数
+* 在注释中禁用 hover
+
+## v0.1.3
+
+* 还原cmake.tmLanguage.yml文件
+
+## v0.1.2
+
+* readme中增加中文描述
+
+## v0.1.1
+
+* 更新package.json中的keywords
+
+## v0.1.0
+
+* 用于 Kylin-IDE 的第一个版本

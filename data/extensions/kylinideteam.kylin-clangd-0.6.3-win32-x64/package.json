@@ -1,0 +1,545 @@
+{
+	"name": "kylin-clangd",
+	"displayName": "%displayName%",
+	"description": "%description%",
+	"version": "0.6.3",
+	"publisher": "KylinIdeTeam",
+	"license": "MIT",
+	"homepage": "https://github.com/quanzhuo/vscode-clangd",
+	"icon": "icon.png",
+	"engines": {
+		"vscode": "^1.75.0"
+	},
+	"downloadUrl": "https://gitee.com/openKylin/kylin-clangd/releases",
+	"categories": [
+		"Programming Languages",
+		"Linters",
+		"Formatters"
+	],
+	"keywords": [
+		"C",
+		"C++",
+		"clang",
+		"clangd",
+		"LLVM",
+		"clang-tidy",
+		"clang-format",
+		"KylinIdeDev",
+		"KylinIdeDevCYuYan",
+		"KylinIdeDevCPlusPlus",
+		"KylinIdeDevEdit"
+	],
+	"activationEvents": [
+		"onLanguage:c",
+		"onLanguage:cpp",
+		"onLanguage:cuda-cpp",
+		"onLanguage:objective-c",
+		"onLanguage:objective-cpp"
+	],
+	"l10n": "./l10n",
+	"main": "./out/bundle",
+	"scripts": {
+		"esbuild": "esbuild ./src/extension.ts --bundle --outfile=out/bundle.js --external:@aws-sdk/client-s3 --external:vscode --format=cjs --platform=node --main-fields=module,main --alias:vscode-json-languageservice=vscode-json-languageservice/lib/esm/jsonLanguageService.js --alias:vscode-json-languageservice/lib/umd/services/jsonValidation=vscode-json-languageservice/lib/esm/services/jsonValidation.js --alias:vscode-json-languageservice/lib/umd/services/jsonSchemaService=vscode-json-languageservice/lib/esm/services/jsonSchemaService.js --alias:vscode-json-languageservice/lib/umd/services/jsonDocumentSymbols=vscode-json-languageservice/lib/esm/services/jsonDocumentSymbols.js --alias:vscode-json-languageservice/lib/umd/services/jsonLinks=vscode-json-languageservice/lib/esm/services/jsonLinks.js",
+		"vscode:prepublish": "npm run check-ts && npm run esbuild -- --minify --keep-names",
+		"compile": "npm run esbuild -- --sourcemap",
+		"check-ts": "tsc -noEmit -p ./",
+		"format": "clang-format -i --glob=\"{src,test}/*.ts\"",
+		"test-compile": "tsc -p ./ && npm run compile",
+		"test": "npm run test-compile && node ./out/test/index.js",
+		"package": "vsce package --baseImagesUrl https://raw.githubusercontent.com/clangd/vscode-clangd/master/",
+		"publish": "vsce publish --baseImagesUrl https://raw.githubusercontent.com/clangd/vscode-clangd/master/",
+		"publish-openvsx": "ovsx publish --baseImagesUrl https://raw.githubusercontent.com/clangd/vscode-clangd/master/",
+		"package-pre-release": "vsce package --pre-release --baseImagesUrl https://raw.githubusercontent.com/clangd/vscode-clangd/master/",
+		"publish-pre-release": "vsce publish --pre-release --baseImagesUrl https://raw.githubusercontent.com/clangd/vscode-clangd/master/",
+		"publish-openvsx-pre-release": "ovsx publish --pre-release --baseImagesUrl https://raw.githubusercontent.com/clangd/vscode-clangd/master/",
+		"postinstall": "patch-package",
+		"git-clang-format": "git-clang-format --extensions=ts"
+	},
+	"dependencies": {
+		"@clangd/install": "0.1.20",
+		"ignore": "^7.0.6",
+		"tar": "^7.5.2",
+		"vscode-languageclient": "^9.0.1",
+		"vscode-languageserver-textdocument": "^1.0.12",
+		"vscode-languageserver-types": "^3.17.5",
+		"yaml-language-server": "^1.19.2"
+	},
+	"devDependencies": {
+		"@types/glob": "^9.0.0",
+		"@types/mocha": "^10.0.7",
+		"@types/node": "^24.10.1",
+		"@types/sinon": "^21.0.0",
+		"@types/tar": "^6.1.13",
+		"@types/vscode": "^1.75.0",
+		"@vscode/test-electron": "^2.5.2",
+		"@vscode/vsce": "^3.9.1",
+		"clang-format": "^1.8.0",
+		"esbuild": "^0.28.0",
+		"glob": "^13.0.6",
+		"mocha": "^11.7.5",
+		"ovsx": "^0.10.11",
+		"patch-package": "^8.0.1",
+		"sinon": "^21.1.2",
+		"typescript": "^6.0.3"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/quanzhuo/vscode-clangd.git"
+	},
+	"qna": "marketplace",
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": false,
+			"description": "%capabilities.untrustedWorkspaces.description%"
+		}
+	},
+	"contributes": {
+		"languages": [
+			{
+				"id": "yaml",
+				"filenames": [
+					".clangd",
+					".clang-tidy",
+					".clang-format"
+				],
+				"aliases": [
+					"YAML",
+					"yaml"
+				]
+			},
+			{
+				"id": "cpp",
+				"filenamePatterns": [
+					"**/include/c++/**",
+					"**/MSVC/*/include/**"
+				],
+				"firstLine": "^/[/*].*-\\*-\\s*C\\+\\+\\s*-\\*-.*"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "%displayName%",
+			"properties": {
+				"clangd.path": {
+					"type": "string",
+					"default": "clangd",
+					"scope": "machine-overridable",
+					"description": "%clangd.path.description%"
+				},
+				"clangd.useScriptAsExecutable": {
+					"type": "boolean",
+					"default": false,
+					"scope": "machine-overridable",
+					"description": "%clangd.useScriptAsExecutable.description%"
+				},
+				"clangd.arguments": {
+					"type": "array",
+					"default": [],
+					"items": {
+						"type": "string"
+					},
+					"description": "%clangd.arguments.description%"
+				},
+				"clangd.trace": {
+					"type": "string",
+					"description": "%clangd.trace.description%"
+				},
+				"clangd.semanticHighlighting": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.semanticHighlighting.description%",
+					"deprecationMessage": "%clangd.semanticHighlighting.deprecationMessage%"
+				},
+				"clangd.fallbackFlags": {
+					"type": "array",
+					"default": [],
+					"items": {
+						"type": "string"
+					},
+					"description": "%clangd.fallbackFlags.description%"
+				},
+				"clangd.serverCompletionRanking": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.serverCompletionRanking.description%"
+				},
+				"clangd.restartAfterCrash": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.restartAfterCrash.description%"
+				},
+				"clangd.checkUpdates": {
+					"type": "boolean",
+					"default": false,
+					"description": "%clangd.checkUpdates.description%"
+				},
+				"clangd.onConfigChanged": {
+					"type": "string",
+					"default": "restart",
+					"description": "%clangd.onConfigChanged.description%",
+					"enum": [
+						"prompt",
+						"restart",
+						"ignore"
+					],
+					"enumDescriptions": [
+						"%clangd.onConfigChanged.enumDescriptions.0%",
+						"%clangd.onConfigChanged.enumDescriptions.1%",
+						"%clangd.onConfigChanged.enumDescriptions.2%"
+					]
+				},
+				"clangd.onConfigChangedForceEnable": {
+					"type": "boolean",
+					"default": false,
+					"description": "%clangd.onConfigChangedForceEnable.description%"
+				},
+				"clangd.detectExtensionConflicts": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.detectExtensionConflicts.description%"
+				},
+				"clangd.inactiveRegions.useBackgroundHighlight": {
+					"type": "boolean",
+					"default": false,
+					"description": "%clangd.inactiveRegions.useBackgroundHighlight.description%"
+				},
+				"clangd.inactiveRegions.opacity": {
+					"type": "number",
+					"default": 0.55,
+					"description": "%clangd.inactiveRegions.opacity.description%"
+				},
+				"clangd.enableCodeCompletion": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.enableCodeCompletion.description%"
+				},
+				"clangd.enableHover": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.enableHover.description%"
+				},
+				"clangd.enable": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.enable.description%"
+				},
+				"clangd.useBuiltInClangdIfAvailable": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.useBuiltInClangdIfAvailable.description%",
+					"deprecationMessage": "%clangd.useBuiltInClangdIfAvailable.deprecationMessage%"
+				},
+				"clangd.preferBundledClangd": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.preferBundledClangd.description%"
+				},
+				"clangd.formatting.preferBundledClangFormat": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.formatting.preferBundledClangFormat.description%"
+				},
+				"clangd.formatting.clangFormatPath": {
+					"type": "string",
+					"default": "clang-format",
+					"description": "%clangd.formatting.clangFormatPath.description%"
+				},
+				"clangd.formatting.includePattern": {
+					"type": "string",
+					"default": "**/*.{c,cpp,h,hpp,cc,cxx,m,mm,cu,inc}",
+					"description": "%clangd.formatting.includePattern.description%"
+				},
+				"clangd.formatting.excludePattern": {
+					"type": "string",
+					"default": "{**/build/**,**/out/**,**/cmake-build-*/**}",
+					"description": "%clangd.formatting.excludePattern.description%"
+				},
+				"clangd.formatting.concurrency": {
+					"type": "number",
+					"default": 0,
+					"description": "%clangd.formatting.concurrency.description%"
+				},
+				"clangd.formatting.timeoutMs": {
+					"type": "number",
+					"default": 15000,
+					"description": "%clangd.formatting.timeoutMs.description%"
+				},
+				"clangd.formatting.respectGitIgnore": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.formatting.respectGitIgnore.description%"
+				},
+				"clangd.headerInsertion": {
+					"type": "string",
+					"default": "iwyu",
+					"description": "%clangd.headerInsertion.description%",
+					"enum": [
+						"iwyu",
+						"never"
+					],
+					"enumDescriptions": [
+						"%clangd.headerInsertion.enumDescriptions.0%",
+						"%clangd.headerInsertion.enumDescriptions.1%"
+					]
+				},
+				"clangd.enableClangTidyDiagnostic": {
+					"type": "boolean",
+					"default": true,
+					"description": "%clangd.enableClangTidyDiagnostic.description%"
+				}
+			}
+		},
+		"colors": [
+			{
+				"id": "clangd.inactiveRegions.background",
+				"description": "%colors.clangd.inactiveRegions.background.description%",
+				"defaults": {
+					"dark": "#1212124C",
+					"light": "#DCDCDC4C",
+					"highContrast": "#FCFCFC4C"
+				}
+			}
+		],
+		"commands": [
+			{
+				"command": "clangd.switchheadersource",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.switchheadersource.title%"
+			},
+			{
+				"command": "clangd.install",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.install.title%"
+			},
+			{
+				"command": "clangd.update",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.update.title%"
+			},
+			{
+				"command": "clangd.activate",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.activate.title%"
+			},
+			{
+				"command": "clangd.restart",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.restart.title%"
+			},
+			{
+				"command": "clangd.shutdown",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.shutdown.title%"
+			},
+			{
+				"command": "clangd.formatWorkspace",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.formatWorkspace.title%"
+			},
+			{
+				"command": "clangd.typeHierarchy",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.typeHierarchy.title%"
+			},
+			{
+				"command": "clangd.typeHierarchy.viewParents",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.typeHierarchy.viewParents.title%",
+				"icon": "$(triangle-up)"
+			},
+			{
+				"command": "clangd.typeHierarchy.viewChildren",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.typeHierarchy.viewChildren.title%",
+				"icon": "$(triangle-down)"
+			},
+			{
+				"command": "clangd.typeHierarchy.close",
+				"category": "Kylin Clangd",
+				"enablement": "clangd.typeHierarchyView.visible",
+				"title": "%commands.clangd.typeHierarchy.close.title%",
+				"icon": "$(panel-close)"
+			},
+			{
+				"command": "clangd.memoryUsage",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.memoryUsage.title%",
+				"enablement": "clangd.memoryUsage.supported",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "clangd.memoryUsage.close",
+				"category": "Kylin Clangd",
+				"enablement": "clangd.memoryUsage.visible",
+				"title": "%commands.clangd.memoryUsage.close.title%",
+				"icon": "$(panel-close)"
+			},
+			{
+				"command": "clangd.ast",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.ast.title%",
+				"enablement": "clangd.ast.supported",
+				"icon": "$(list-tree)"
+			},
+			{
+				"command": "clangd.ast.close",
+				"category": "Kylin Clangd",
+				"enablement": "clangd.ast.visible",
+				"title": "%commands.clangd.ast.close.title%",
+				"icon": "$(panel-close)"
+			},
+			{
+				"command": "clangd.projectConfig",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.projectConfig.title%",
+				"icon": "$(gear)"
+			},
+			{
+				"command": "clangd.userConfig",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.userConfig.title%",
+				"icon": "$(gear)"
+			},
+			{
+				"command": "clangd.inlayHints.toggle",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.inlayHints.toggle.title%",
+				"enablement": "clangd.inlayHints.supported"
+			},
+			{
+				"command": "clangd.showDocumentation",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.showDocumentation.title%"
+			},
+			{
+				"command": "clangd.registerDocumentationProvider",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.registerDocumentationProvider.title%"
+			},
+			{
+				"command": "clangd.createClangdConfigFile",
+				"category": "Kylin Clangd",
+				"title": "%commands.clangd.createClangdConfigFile.title%"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "clangd.switchheadersource",
+				"key": "Alt+o",
+				"mac": "Alt+cmd+o",
+				"when": "(resourceLangId == c || resourceLangId == cpp || resourceLangId == cuda-cpp || resourceLangId == objective-c || resourceLangId == objective-cpp) && editorTextFocus"
+			},
+			{
+				"command": "clangd.typeHierarchy",
+				"key": "Shift+Alt+t",
+				"when": "(resourceLangId == cpp || resourceLangId == cuda-cpp || resourceLangId == objective-c || resourceLangId == objective-cpp) && editorTextFocus"
+			},
+			{
+				"command": "clangd.showDocumentation",
+				"key": "Shift+f1",
+				"when": "editorTextFocus && (editorLangId == cpp || editorLangId == c)"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"command": "clangd.typeHierarchy",
+					"when": "resourceLangId == cpp && clangd.enableTypeHierarchy",
+					"group": "0_navigation@4",
+					"_comment": "see https://github.com/microsoft/vscode-references-view/blob/f63eaed9934ca5ecc8f3fb3ca096f38c6e5e181f/package.json#L162"
+				},
+				{
+					"command": "clangd.switchheadersource",
+					"when": "resourceLangId == c || resourceLangId == cpp || resourceLangId == cuda-cpp || resourceLangId == objective-c || resourceLangId == objective-cpp",
+					"group": "0_navigation@5"
+				},
+				{
+					"command": "clangd.ast",
+					"when": "(resourceLangId == c || resourceLangId == cpp || resourceLangId == cuda-cpp || resourceLangId == objective-c || resourceLangId == objective-cpp) && clangd.ast.supported"
+				}
+			],
+			"view/title": [
+				{
+					"command": "clangd.typeHierarchy.viewParents",
+					"when": "view == clangd.typeHierarchyView",
+					"group": "navigation"
+				},
+				{
+					"command": "clangd.typeHierarchy.viewChildren",
+					"when": "view == clangd.typeHierarchyView",
+					"group": "navigation"
+				},
+				{
+					"command": "clangd.typeHierarchy.close",
+					"when": "view == clangd.typeHierarchyView",
+					"group": "navigation"
+				},
+				{
+					"command": "clangd.memoryUsage.close",
+					"when": "view == clangd.memoryUsage",
+					"group": "navigation"
+				},
+				{
+					"command": "clangd.memoryUsage",
+					"when": "view == clangd.memoryUsage",
+					"group": "navigation"
+				},
+				{
+					"command": "clangd.ast.close",
+					"when": "view == clangd.ast",
+					"group": "navigation"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "clangd.typeHierarchy.viewParents",
+					"when": "resourceLangId == cpp"
+				},
+				{
+					"command": "clangd.typeHierarchy.viewChildren",
+					"when": "resourceLangId == cpp"
+				},
+				{
+					"command": "clangd.memoryUsage",
+					"when": "clangd.memoryUsage.supported"
+				},
+				{
+					"command": "clangd.showDocumentation",
+					"when": "editorTextFocus && (editorLangId == cpp || editorLangId == c)"
+				},
+				{
+					"command": "clangd.registerDocumentationProvider",
+					"when": "false"
+				},
+				{
+					"command": "clangd.createClangdConfigFile",
+					"when": "true"
+				}
+			]
+		},
+		"views": {
+			"explorer": [
+				{
+					"id": "clangd.typeHierarchyView",
+					"name": "%views.explorer.clangd.typeHierarchyView.name%",
+					"when": "clangd.typeHierarchyVisible"
+				},
+				{
+					"id": "clangd.memoryUsage",
+					"name": "%views.explorer.clangd.memoryUsage.name%",
+					"when": "clangd.memoryUsage.hasData"
+				},
+				{
+					"id": "clangd.ast",
+					"name": "%views.explorer.clangd.ast.name%",
+					"when": "clangd.ast.hasData"
+				}
+			]
+		}
+	},
+	"__metadata": {
+		"installedTimestamp": 1792028812017,
+		"targetPlatform": "win32-x64",
+		"size": 26173913
+	}
+}

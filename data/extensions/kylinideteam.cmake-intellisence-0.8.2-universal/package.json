@@ -1,0 +1,207 @@
+{
+	"name": "cmake-intellisence",
+	"displayName": "CMake IntelliSense",
+	"description": "CMake format, completion, go to definition, document link, semantic tokens, and more...",
+	"author": "quanzhuo",
+	"version": "0.8.2",
+	"engines": {
+		"vscode": "^1.85.0"
+	},
+	"l10n": "./l10n",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/quanzhuo/cmake-intellisence"
+	},
+	"bugs": {
+		"url": "https://github.com/quanzhuo/cmake-intellisence/issues",
+		"email": "quanzhuo@kylinos.cn"
+	},
+	"categories": [
+		"Programming Languages",
+		"Snippets",
+		"Formatters"
+	],
+	"keywords": [
+		"CMake",
+		"C++",
+		"KylinIdeDev",
+		"KylinIdeDevEdit",
+		"KylinIdeDevCYuYan",
+		"KylinIdeDevCPlusPlus",
+		"KylinIdeDevOtherLanguages"
+	],
+	"downloadUrl": "https://gitee.com/openkylin/cmake-intellisence/releases",
+	"publisher": "KylinIdeTeam",
+	"icon": "images/icon.png",
+	"activationEvents": [
+		"onLanguage:cmake",
+		"workspaceContains:CMakeLists.txt",
+		"workspaceContains:**/*.cmake"
+	],
+	"main": "./dist/client",
+	"contributes": {
+		"grammars": [
+			{
+				"language": "cmake",
+				"scopeName": "source.cmake",
+				"path": "./syntaxes/cmake.tmLanguage.json"
+			},
+			{
+				"language": "cmakecache",
+				"scopeName": "source.cmakecache",
+				"path": "./syntaxes/cmakecache.tmLanguage.json"
+			},
+			{
+				"language": "cmdsignature",
+				"scopeName": "source.cmdsignature",
+				"path": "./syntaxes/cmdsignature.tmLanguage.json"
+			}
+		],
+		"languages": [
+			{
+				"id": "cmake",
+				"extensions": [
+					".cmake"
+				],
+				"filenames": [
+					"CMakeLists.txt"
+				],
+				"aliases": [
+					"CMake"
+				],
+				"configuration": "./language-configuration.json"
+			},
+			{
+				"id": "cmakecache",
+				"filenames": [
+					"CMakeCache.txt"
+				],
+				"aliases": [
+					"CMakeCache"
+				]
+			},
+			{
+				"id": "cmdsignature"
+			}
+		],
+		"snippets": [
+			{
+				"language": "cmake",
+				"path": "./snippets.json"
+			}
+		],
+		"configuration": [
+			{
+				"title": "CMake IntelliSense",
+				"properties": {
+					"cmakeIntelliSense.cmakePath": {
+						"type": "string",
+						"default": "cmake",
+						"description": "%cmakePath%"
+					},
+					"cmakeIntelliSense.pkgConfigPath": {
+						"type": "string",
+						"default": "pkg-config",
+						"description": "%pkgConfigPath%"
+					},
+					"cmakeIntelliSense.workspaceIgnoreDirectories": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"default": [
+							".git",
+							".hg",
+							".svn",
+							"node_modules",
+							"dist",
+							"out",
+							"build",
+							"cmake-build-debug",
+							"cmake-build-release"
+						],
+						"description": "%workspaceIgnoreDirectories%"
+					},
+					"cmakeIntelliSense.excludeCMakeBuildDirectories": {
+						"type": "boolean",
+						"default": true,
+						"description": "%excludeCMakeBuildDirectories%"
+					},
+					"cmakeIntelliSense.cmdCaseDiagnostics": {
+						"type": "boolean",
+						"description": "%cmdCaseDiagnostics%",
+						"default": false
+					},
+					"cmakeIntelliSense.loggingLevel": {
+						"type": "string",
+						"enum": [
+							"off",
+							"error",
+							"warning",
+							"info",
+							"debug"
+						],
+						"default": "off",
+						"markdownDescription": "%loggingLevel%"
+					},
+					"cmakeIntelliSense.trace.server": {
+						"type": "string",
+						"enum": [
+							"verbose",
+							"message",
+							"off"
+						],
+						"default": "off"
+					},
+					"cmakeIntelliSense.enableCMakeToolsIntegration": {
+						"type": "boolean",
+						"default": true,
+						"description": "%enableCMakeToolsIntegration%"
+					}
+				}
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "rimraf dist syntaxes/cmake.tmLanguage.json syntaxes/cmakecache.tmLanguage.json syntaxes/cmdsignature.tmLanguage.json && npm run product",
+		"compile": "tsc -p ./server",
+		"tsc-watch": "tsc -p ./server -w",
+		"develop": "npm run grammar && npm run antlr4 && webpack --mode development --watch",
+		"product": "npm run grammar && npm run antlr4 && webpack --mode production --devtool false",
+		"pretest": "npm run grammar && rimraf server/out server/tsconfig.tsbuildinfo && npm run compile && npm run lint",
+		"lint": "eslint . --ext ts",
+		"test": "mocha",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"grammar-cmake": "node ./build/yaml-to-json.mjs cmake.tmLanguage.json",
+		"grammar-cmakecache": "node ./build/yaml-to-json.mjs cmakecache.tmLanguage.json",
+		"grammar-cmdsignature": "node ./build/yaml-to-json.mjs cmdsignature.tmLanguage.json",
+		"grammar": "node ./build/yaml-to-json.mjs",
+		"antlr4": "cd server/src/antlr && antlr4 -o ../generated/ -visitor -Dlanguage=TypeScript CMakeLexer.g4 && antlr4 -o ../generated/ -visitor -Dlanguage=TypeScript CMakeParser.g4"
+	},
+	"devDependencies": {
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^22.19.15",
+		"@types/which": "^3.0.4",
+		"@typescript-eslint/eslint-plugin": "^7.13.1",
+		"@typescript-eslint/parser": "^7.13.1",
+		"eslint": "^8.57.0",
+		"ignore-loader": "^0.1.2",
+		"js-yaml": "^4.1.0",
+		"mocha": "^11.0.1",
+		"rimraf": "^6.0.1",
+		"ts-loader": "^9.5.1",
+		"typescript": "^5.3.3",
+		"vscode-oniguruma": "^2.0.1",
+		"vscode-textmate": "^9.3.2",
+		"webpack": "^5.91.0",
+		"webpack-cli": "^5.1.4"
+	},
+	"dependencies": {
+		"which": "^6.0.1"
+	},
+	"__metadata": {
+		"installedTimestamp": 1792028677251,
+		"targetPlatform": "universal",
+		"size": 1771455
+	}
+}

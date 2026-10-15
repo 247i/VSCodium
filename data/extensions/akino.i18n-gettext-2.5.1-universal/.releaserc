@@ -1,0 +1,38 @@
+{
+  "repositoryUrl": "https://github.com/akinoccc/i18n-gettext-vscode.git",
+  "branches": [
+    "+([0-9])?(.{+([0-9]),x}).x",
+    "main",
+    {
+      "name": "beta",
+      "prerelease": true
+    },
+    {
+      "name": "alpha",
+      "prerelease": true
+    }
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+        "semantic-release-vsce",
+        {
+          "packageVsix": true
+        }
+      ],
+    [
+      "@semantic-release/git",
+      {
+        "message": "chore(release): v${nextRelease.version} \n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "addReleases": "top"
+      }
+    ]
+  ]
+}

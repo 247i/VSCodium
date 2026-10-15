@@ -1,0 +1,686 @@
+{
+	"publisher": "akino",
+	"name": "i18n-gettext",
+	"displayName": "i18n Gettext",
+	"type": "commonjs",
+	"version": "2.5.1",
+	"private": true,
+	"preview": false,
+	"description": "VSCode extension for managing and translating gettext-based translation strings",
+	"homepage": "https://github.com/akinoccc/i18n-gettext",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/akinoccc/i18n-gettext.git"
+	},
+	"categories": [
+		"Other"
+	],
+	"main": "./dist/extension/index.js",
+	"icon": "resources/extension-icon.png",
+	"l10n": "./l10n",
+	"engines": {
+		"vscode": "^1.89.0"
+	},
+	"activationEvents": [
+		"onStartupFinished",
+		"onWebviewPanel:i18n-gettext.translationEditor"
+	],
+	"contributes": {
+		"configuration": {
+			"title": "%configuration.title%",
+			"properties": {
+				"i18n-gettext.localesConfig": {
+					"title": "%localesConfig.title%",
+					"type": "object",
+					"default": {
+						"root": ".",
+						"type": "nested",
+						"basePath": "src/language",
+						"pattern": "${locale}/${domain}.po",
+						"defaultDomain": "app",
+						"sourceLanguage": "en-US"
+					},
+					"description": "%localesConfig.description%",
+					"scope": "resource",
+					"properties": {
+						"root": {
+							"type": "string",
+							"default": ".",
+							"description": "%localesConfig.root.description%"
+						},
+						"type": {
+							"type": "string",
+							"enum": [
+								"flat",
+								"nested",
+								"custom"
+							],
+							"default": "nested",
+							"description": "%localesConfig.type.description%"
+						},
+						"basePath": {
+							"type": "string",
+							"default": "src/language",
+							"description": "%localesConfig.basePath.description%"
+						},
+						"pattern": {
+							"type": "string",
+							"default": "${locale}/${domain}.po",
+							"description": "%localesConfig.pattern.description%"
+						},
+						"defaultDomain": {
+							"type": "string",
+							"default": "app",
+							"description": "%localesConfig.defaultDomain.description%"
+						},
+						"sourceLanguage": {
+							"type": "string",
+							"default": "en-US",
+							"description": "%localesConfig.sourceLanguage.description%"
+						}
+					}
+				},
+				"i18n-gettext.localesConfig.root": {
+					"title": "%localesConfig.root.title%",
+					"type": "string",
+					"default": ".",
+					"description": "%localesConfig.root.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.localesConfig.type": {
+					"title": "%localesConfig.type.title%",
+					"type": "string",
+					"enum": [
+						"flat",
+						"nested",
+						"custom"
+					],
+					"default": "nested",
+					"description": "%localesConfig.type.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.localesConfig.basePath": {
+					"title": "%localesConfig.basePath.title%",
+					"default": "src/language",
+					"description": "%localesConfig.basePath.description%",
+					"type": "string",
+					"scope": "resource"
+				},
+				"i18n-gettext.localesConfig.pattern": {
+					"title": "%localesConfig.pattern.title%",
+					"default": "${locale}/${domain}.po",
+					"description": "%localesConfig.pattern.description%",
+					"type": "string",
+					"scope": "resource"
+				},
+				"i18n-gettext.localesConfig.defaultDomain": {
+					"title": "%localesConfig.defaultDomain.title%",
+					"type": "string",
+					"default": "app",
+					"description": "%localesConfig.defaultDomain.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.localesConfig.sourceLanguage": {
+					"title": "%localesConfig.sourceLanguage.title%",
+					"type": "string",
+					"default": "en-US",
+					"description": "%localesConfig.sourceLanguage.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.translatorConfig": {
+					"title": "%translatorConfig.title%",
+					"type": "object",
+					"default": {
+						"onlyTranslateUntranslatedAndFuzzy": true,
+						"batch": {
+							"pageSize": 20
+						}
+					},
+					"description": "%translatorConfig.description%",
+					"scope": "resource",
+					"properties": {
+						"onlyTranslateUntranslatedAndFuzzy": {
+							"type": "boolean",
+							"default": true,
+							"description": "%translatorConfig.onlyTranslateUntranslatedAndFuzzy.description%"
+						},
+						"batch": {
+							"type": "object",
+							"default": {
+								"pageSize": 20
+							},
+							"properties": {
+								"pageSize": {
+									"type": "number",
+									"default": 20,
+									"description": "%translatorConfig.batch.pageSize.description%"
+								}
+							}
+						}
+					}
+				},
+				"i18n-gettext.translatorConfig.onlyTranslateUntranslatedAndFuzzy": {
+					"title": "%translatorConfig.onlyTranslateUntranslatedAndFuzzy.title%",
+					"type": "boolean",
+					"default": true,
+					"description": "%translatorConfig.onlyTranslateUntranslatedAndFuzzy.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.translatorConfig.batch.pageSize": {
+					"title": "%translatorConfig.batch.pageSize.title%",
+					"type": "number",
+					"default": 20,
+					"description": "%translatorConfig.batch.pageSize.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.requestTimeoutMs": {
+					"title": "%requestTimeoutMs.title%",
+					"type": "number",
+					"default": 600000,
+					"minimum": 0,
+					"description": "%requestTimeoutMs.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.aiConfig": {
+					"type": "object",
+					"title": "%aiConfig.title%",
+					"default": {
+						"additionalPrompts": [],
+						"ai": []
+					},
+					"description": "%aiConfig.description%",
+					"scope": "resource",
+					"properties": {
+						"additionalPrompts": {
+							"type": "array",
+							"default": [],
+							"description": "%aiConfig.additionalPrompts.description%",
+							"items": {
+								"type": "string",
+								"title": "%aiConfig.additionalPrompts.prompt.title%",
+								"description": "%aiConfig.additionalPrompts.prompt.description%"
+							}
+						},
+						"ai": {
+							"type": "array",
+							"default": [],
+							"description": "%aiConfig.ai.description%",
+							"items": {
+								"type": "object",
+								"title": "%aiConfig.ai.item.title%",
+								"properties": {
+									"provider": {
+										"type": "string",
+										"title": "%aiConfig.ai.provider.title%",
+										"description": "%aiConfig.ai.provider.description%"
+									},
+									"modelId": {
+										"type": "string",
+										"title": "%aiConfig.ai.modelId.title%",
+										"description": "%aiConfig.ai.modelId.description%"
+									},
+									"apiKey": {
+										"type": "string",
+										"title": "%aiConfig.ai.apiKey.title%",
+										"description": "%aiConfig.ai.apiKey.description%",
+										"format": "password"
+									},
+									"baseURL": {
+										"type": "string",
+										"title": "%aiConfig.ai.baseURL.title%",
+										"description": "%aiConfig.ai.baseURL.description%",
+										"format": "uri"
+									},
+									"region": {
+										"type": "string",
+										"title": "%aiConfig.ai.region.title%",
+										"description": "%aiConfig.ai.region.description%",
+										"default": ""
+									}
+								},
+								"required": [
+									"provider",
+									"modelId"
+								]
+							}
+						},
+						"reviewAI": {
+							"type": "object",
+							"properties": {
+								"provider": {
+									"type": "string",
+									"title": "%aiConfig.reviewAI.provider.title%",
+									"default": "",
+									"description": "%aiConfig.reviewAI.provider.description%"
+								},
+								"modelId": {
+									"type": "string",
+									"title": "%aiConfig.reviewAI.modelId.title%",
+									"default": "",
+									"description": "%aiConfig.reviewAI.modelId.description%"
+								},
+								"apiKey": {
+									"type": "string",
+									"title": "%aiConfig.reviewAI.apiKey.title%",
+									"default": "",
+									"description": "%aiConfig.reviewAI.apiKey.description%",
+									"format": "password"
+								},
+								"baseURL": {
+									"type": "string",
+									"title": "%aiConfig.reviewAI.baseURL.title%",
+									"default": "",
+									"description": "%aiConfig.reviewAI.baseURL.description%",
+									"format": "uri"
+								},
+								"region": {
+									"type": "string",
+									"title": "%aiConfig.reviewAI.region.title%",
+									"default": "",
+									"description": "%aiConfig.reviewAI.region.description%"
+								}
+							}
+						}
+					}
+				},
+				"i18n-gettext.aiConfig.ai": {
+					"type": "array",
+					"title": "%aiConfig.ai.title%",
+					"default": [],
+					"description": "%aiConfig.ai.description%",
+					"scope": "resource",
+					"items": {
+						"type": "object",
+						"title": "%aiConfig.ai.item.title%",
+						"properties": {
+							"provider": {
+								"type": "string",
+								"title": "%aiConfig.ai.provider.title%",
+								"description": "%aiConfig.ai.provider.description%"
+							},
+							"modelId": {
+								"type": "string",
+								"title": "%aiConfig.ai.modelId.title%",
+								"description": "%aiConfig.ai.modelId.description%"
+							},
+							"apiKey": {
+								"type": "string",
+								"title": "%aiConfig.ai.apiKey.title%",
+								"description": "%aiConfig.ai.apiKey.description%",
+								"format": "password"
+							},
+							"baseURL": {
+								"type": "string",
+								"title": "%aiConfig.ai.baseURL.title%",
+								"description": "%aiConfig.ai.baseURL.description%",
+								"format": "uri"
+							},
+							"region": {
+								"type": "string",
+								"title": "%aiConfig.ai.region.title%",
+								"description": "%aiConfig.ai.region.description%",
+								"default": ""
+							}
+						},
+						"required": [
+							"provider",
+							"modelId"
+						]
+					}
+				},
+				"i18n-gettext.aiConfig.additionalPrompts": {
+					"type": "array",
+					"title": "%aiConfig.additionalPrompts.title%",
+					"default": [],
+					"description": "%aiConfig.additionalPrompts.description%",
+					"scope": "resource",
+					"items": {
+						"type": "string",
+						"title": "%aiConfig.additionalPrompts.prompt.title%",
+						"description": "%aiConfig.additionalPrompts.prompt.description%"
+					}
+				},
+				"i18n-gettext.aiConfig.reviewAI.provider": {
+					"type": "string",
+					"title": "%aiConfig.reviewAI.provider.title%",
+					"default": "",
+					"description": "%aiConfig.reviewAI.provider.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.aiConfig.reviewAI.modelId": {
+					"type": "string",
+					"title": "%aiConfig.reviewAI.modelId.title%",
+					"default": "",
+					"description": "%aiConfig.reviewAI.modelId.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.aiConfig.reviewAI.apiKey": {
+					"type": "string",
+					"title": "%aiConfig.reviewAI.apiKey.title%",
+					"default": "",
+					"description": "%aiConfig.reviewAI.apiKey.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.aiConfig.reviewAI.baseURL": {
+					"type": "string",
+					"title": "%aiConfig.reviewAI.baseURL.title%",
+					"default": "",
+					"description": "%aiConfig.reviewAI.baseURL.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.aiConfig.reviewAI.region": {
+					"type": "string",
+					"title": "%aiConfig.reviewAI.region.title%",
+					"default": "",
+					"description": "%aiConfig.reviewAI.region.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.commands.extract": {
+					"type": "string",
+					"title": "%commands.extract.title%",
+					"default": "",
+					"description": "%commands.extract.description%",
+					"scope": "resource"
+				},
+				"i18n-gettext.commands.compile": {
+					"type": "string",
+					"title": "%commands.compile.title%",
+					"default": "",
+					"description": "%commands.compile.description%",
+					"scope": "resource"
+				}
+			}
+		},
+		"commands": [
+			{
+				"command": "i18n-gettext.selectEntry",
+				"title": "Select Entry",
+				"category": "i18n Gettext",
+				"icon": "$(globe)"
+			},
+			{
+				"command": "i18n-gettext.selectLocale",
+				"title": "Select Locale",
+				"category": "i18n Gettext",
+				"icon": "$(globe)"
+			},
+			{
+				"command": "i18n-gettext.translateLocale",
+				"title": "Translate This Locale",
+				"category": "i18n Gettext",
+				"icon": "$(sparkle)"
+			},
+			{
+				"command": "i18n-gettext.searchEntries",
+				"title": "Search Entries",
+				"category": "i18n Gettext",
+				"icon": "$(search)"
+			},
+			{
+				"command": "i18n-gettext.clearSearch",
+				"title": "Clear Search",
+				"category": "i18n Gettext",
+				"icon": "$(clear-all)"
+			},
+			{
+				"command": "i18n-gettext.filterAllEntries",
+				"title": "Show All Entries",
+				"category": "i18n Gettext",
+				"icon": "$(list-filter)"
+			},
+			{
+				"command": "i18n-gettext.filterTranslatedEntries",
+				"title": "Show Translated Entries",
+				"category": "i18n Gettext",
+				"icon": "$(check)"
+			},
+			{
+				"command": "i18n-gettext.filterUntranslatedEntries",
+				"title": "Show Untranslated Entries",
+				"category": "i18n Gettext",
+				"icon": "$(warning)"
+			},
+			{
+				"command": "i18n-gettext.nextUntranslatedEntry",
+				"title": "Go to Next Untranslated Entry",
+				"category": "i18n Gettext",
+				"icon": "$(arrow-down)"
+			},
+			{
+				"command": "i18n-gettext.refreshEntries",
+				"title": "Refresh Translations",
+				"category": "i18n Gettext",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "i18n-gettext.checkUntranslatedEntries",
+				"title": "Check Untranslated Entries",
+				"category": "i18n Gettext"
+			},
+			{
+				"command": "i18n-gettext.switchWorkspace",
+				"title": "Switch Workspace",
+				"category": "i18n Gettext",
+				"icon": "$(folder)"
+			},
+			{
+				"command": "i18n-gettext.extract",
+				"title": "Extract Strings",
+				"category": "i18n Gettext",
+				"icon": "$(export)"
+			},
+			{
+				"command": "i18n-gettext.compile",
+				"title": "Compile Translations",
+				"category": "i18n Gettext",
+				"icon": "$(package)"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "i18n-gettext",
+					"title": "i18n Gettext",
+					"icon": "resources/extension-icon.svg"
+				}
+			]
+		},
+		"views": {
+			"i18n-gettext": [
+				{
+					"id": "i18n-gettext.workspaces",
+					"name": "Workspaces",
+					"when": "workbenchState == workspace"
+				},
+				{
+					"id": "i18n-gettext.fileTranslation",
+					"name": "Current File Translations",
+					"when": "true"
+				},
+				{
+					"id": "i18n-gettext.progress",
+					"name": "Translation Progress",
+					"when": "true"
+				},
+				{
+					"id": "i18n-gettext.entries",
+					"name": "Translation Entries",
+					"when": "true"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "i18n-gettext.extract",
+					"when": "view == i18n-gettext.progress",
+					"group": "actions@1"
+				},
+				{
+					"command": "i18n-gettext.compile",
+					"when": "view == i18n-gettext.progress",
+					"group": "actions@2"
+				},
+				{
+					"command": "i18n-gettext.checkUntranslatedEntries",
+					"when": "view == i18n-gettext.progress",
+					"group": "navigation@1"
+				},
+				{
+					"command": "i18n-gettext.refreshEntries",
+					"when": "view == i18n-gettext.entries",
+					"group": "navigation@1"
+				},
+				{
+					"command": "i18n-gettext.searchEntries",
+					"when": "view == i18n-gettext.entries",
+					"group": "navigation@2"
+				},
+				{
+					"command": "i18n-gettext.clearSearch",
+					"when": "view == i18n-gettext.entries",
+					"group": "navigation@3"
+				},
+				{
+					"command": "i18n-gettext.filterAllEntries",
+					"when": "view == i18n-gettext.entries",
+					"group": "filter@1"
+				},
+				{
+					"command": "i18n-gettext.filterTranslatedEntries",
+					"when": "view == i18n-gettext.entries",
+					"group": "filter@2"
+				},
+				{
+					"command": "i18n-gettext.filterUntranslatedEntries",
+					"when": "view == i18n-gettext.entries",
+					"group": "filter@3"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "i18n-gettext.translateLocale",
+					"when": "view == i18n-gettext.progress && viewItem == localeProgress",
+					"group": "navigation@1"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "i18n-gettext.nextUntranslatedEntry",
+				"key": "ctrl+enter",
+				"mac": "cmd+enter",
+				"when": "webviewId == 'i18n-gettext.translationEditor'"
+			}
+		]
+	},
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite",
+		"typecheck": "tsc --noEmit",
+		"lint": "eslint .",
+		"lint:fix": "eslint --fix .",
+		"l10n:export": "npx @vscode/l10n-dev export --outDir ./l10n ./ ./package.nls.json",
+		"l10n:sync": "tsx scripts/sync-l10n.ts",
+		"l10n:export-src": "npx @vscode/l10n-dev export --outDir ./l10n ./src ./package.nls.json",
+		"package": "vsce package --no-dependencies",
+		"release": "semantic-release",
+		"docs:dev": "vitepress dev docs",
+		"docs:build": "vitepress build docs",
+		"docs:preview": "vitepress preview docs"
+	},
+	"dependencies": {
+		"@ai-sdk/amazon-bedrock": "^2.2.10",
+		"@ai-sdk/anthropic": "^1.2.12",
+		"@ai-sdk/azure": "^1.3.23",
+		"@ai-sdk/cerebras": "^0.2.14",
+		"@ai-sdk/cohere": "^1.2.10",
+		"@ai-sdk/deepinfra": "^0.2.15",
+		"@ai-sdk/deepseek": "^0.2.14",
+		"@ai-sdk/fal": "^0.1.12",
+		"@ai-sdk/fireworks": "^0.2.14",
+		"@ai-sdk/google": "^1.2.19",
+		"@ai-sdk/google-vertex": "^2.2.24",
+		"@ai-sdk/groq": "^1.2.9",
+		"@ai-sdk/mistral": "^1.2.8",
+		"@ai-sdk/openai": "^1.3.22",
+		"@ai-sdk/perplexity": "^1.1.9",
+		"@ai-sdk/replicate": "^0.2.8",
+		"@ai-sdk/togetherai": "^0.2.14",
+		"@ai-sdk/xai": "^1.2.16",
+		"@formkit/auto-animate": "^0.8.2",
+		"@openrouter/ai-sdk-provider": "^0.4.6",
+		"@vitalets/google-translate-api": "^9.2.1",
+		"@vscode/l10n": "^0.0.18",
+		"ai": "^4.3.16",
+		"fastq": "^1.19.1",
+		"gettext-parser": "^8.0.0",
+		"lodash": "^4.17.21",
+		"ollama-ai-provider": "^1.2.0",
+		"pinia": "^3.0.3",
+		"pinia-plugin-persistedstate": "^4.3.0",
+		"qwen-ai-provider": "^0.1.0"
+	},
+	"bundleDependencies": [
+		"@vitalets/google-translate-api",
+		"ai",
+		"gettext-parser"
+	],
+	"devDependencies": {
+		"@antfu/eslint-config": "^4.16.1",
+		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/git": "^10.0.1",
+		"@tailwindcss/vite": "^4.1.10",
+		"@tomjs/tsconfig": "^1.7.2",
+		"@tomjs/vite-plugin-vscode": "^4.2.1",
+		"@tomjs/vscode-webview": "^2.0.2",
+		"@types/gettext-parser": "^8.0.0",
+		"@types/lodash": "^4.17.18",
+		"@types/node": "~24.0.3",
+		"@types/vscode": "^1.89.0",
+		"@unocss/preset-wind4": "66.1.0-beta.13",
+		"@unocss/reset": "66.0.0",
+		"@vitejs/plugin-vue": "^5.2.4",
+		"@vscode/l10n-dev": "^0.0.35",
+		"@vscode/vsce": "^3.5.0",
+		"eslint": "^9.29.0",
+		"lucide-vue-next": "^0.488.0",
+		"ovsx": "^0.10.5",
+		"reactive-vscode": "^0.2.22",
+		"semantic-release": "^24.2.5",
+		"semantic-release-vsce": "^6.0.9",
+		"tsup": "^8.5.0",
+		"tsx": "^4.20.3",
+		"typescript": "^5.8.3",
+		"unconfig": "^7.3.2",
+		"unocss": "66.1.0-beta.13",
+		"vite": "^6.3.5",
+		"vite-plugin-vue-devtools": "^7.7.7",
+		"vitepress": "2.0.0-alpha.12",
+		"vue": "^3.5.17"
+	},
+	"pnpm": {
+		"ignoredBuiltDependencies": [
+			"esbuild"
+		],
+		"onlyBuiltDependencies": [
+			"@vscode/vsce-sign",
+			"esbuild",
+			"keytar"
+		]
+	},
+	"vsce": {
+		"dependencies": false
+	},
+	"ovsce": {
+		"dependencies": false
+	},
+	"publishConfig": {
+		"ignoreScripts": false
+	},
+	"__metadata": {
+		"installedTimestamp": 1792028565701,
+		"targetPlatform": "universal",
+		"size": 8023189
+	}
+}

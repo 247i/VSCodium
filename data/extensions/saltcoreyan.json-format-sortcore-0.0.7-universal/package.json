@@ -1,0 +1,90 @@
+{
+	"name": "json-format-sortcore",
+	"displayName": "JSON Format (SaltcoreYan)",
+	"description": "Format and normalize JSON/JSON-like content",
+	"version": "0.0.7",
+	"icon": "images/icon.png",
+	"publisher": "saltcoreyan",
+	"license": "Apache-2.0",
+	"author": {
+		"name": "SaltcoreYan",
+		"url": "https://github.com/SaltcoreYan"
+	},
+	"engines": {
+		"vscode": "^1.103.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/SaltcoreYan/vscode-json-format"
+	},
+	"categories": [
+		"Formatters"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "json-format.jsonFormat",
+				"title": "json-format: 格式化 JSON"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "json-format.jsonFormat",
+				"key": "ctrl+alt+j",
+				"when": "editorTextFocus && !editorReadonly"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "json-format",
+			"properties": {
+				"json-format.maxInputSizeMB": {
+					"type": "number",
+					"default": 2,
+					"minimum": 0,
+					"description": "最大可解析输入大小（MB），支持小数。0 表示不限制。"
+				},
+				"json-format.decodeUnicode": {
+					"type": "boolean",
+					"default": true,
+					"description": "是否将字符串中的 Unicode 转义还原。"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"compile": "tsc -p ./",
+		"lint": "eslint src --max-warnings=0",
+		"watch": "tsc -watch -p ./",
+		"package": "vsce package",
+		"publish:patch": "vsce publish patch",
+		"publish:minor": "vsce publish minor",
+		"publish:major": "vsce publish major",
+		"test": "vscode-test"
+	},
+	"dependencies": {
+		"jsonc-parser": "^3.3.0"
+	},
+	"devDependencies": {
+		"@types/mocha": "^10.0.10",
+		"@types/node": "22.x",
+		"@types/vscode": "^1.103.0",
+		"@typescript-eslint/eslint-plugin": "^8.66.0",
+		"@typescript-eslint/parser": "^8.66.0",
+		"@vscode/test-cli": "^0.0.15",
+		"@vscode/test-electron": "^3.1.0",
+		"@vscode/vsce": "^3.9.2",
+		"eslint": "^10.8.1",
+		"typescript": "5.9.3"
+	},
+	"overrides": {
+		"diff": "8.0.3",
+		"serialize-javascript": "7.0.5"
+	},
+	"__metadata": {
+		"installedTimestamp": 1792028336009,
+		"targetPlatform": "universal",
+		"size": 281519
+	}
+}

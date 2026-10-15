@@ -1,0 +1,227 @@
+{
+	"name": "qt-python",
+	"displayName": "Qt Python",
+	"description": "Qt Python Support",
+	"version": "1.16.0",
+	"homepage": "https://www.qt.io/",
+	"icon": "res/icons/qtforpython.png",
+	"publisher": "theqtcompany",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/qt-labs/vscodeext"
+	},
+	"bugs": {
+		"url": "https://qt-project.atlassian.net/jira/software/c/projects/VSCODEEXT/issues"
+	},
+	"engines": {
+		"vscode": "^1.94.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters",
+		"Snippets"
+	],
+	"keywords": [
+		"Qt",
+		"PySide",
+		"Python"
+	],
+	"qna": "marketplace",
+	"pricing": "Free",
+	"activationEvents": [
+		"workspaceContains:pyproject.toml",
+		"workspaceContains:*.pyproject",
+		"workspaceContains:**/pysidedeploy.spec",
+		"onDebugInitialConfigurations",
+		"onDebugResolve:python"
+	],
+	"main": "./out/extension.js",
+	"l10n": "./l10n",
+	"contributes": {
+		"configuration": {
+			"title": "Qt Python Configuration",
+			"properties": {
+				"qt-python.doNotWarnAboutOldStyleProjects": {
+					"type": "boolean",
+					"default": false,
+					"description": "Do not warn about old-style projects",
+					"scope": "machine-overridable"
+				},
+				"qt-python.preferUv": {
+					"type": "boolean",
+					"default": false,
+					"description": "Prefer uv for creating virtual environments when uv is available on PATH",
+					"scope": "machine-overridable"
+				}
+			}
+		},
+		"commands": [
+			{
+				"command": "qt-python.installPySide6",
+				"title": "%qt-python.command.installPySide6.title%",
+				"category": "Qt-Python"
+			},
+			{
+				"command": "qt-python.createUvEnv",
+				"title": "%qt-python.command.createUvEnv.title%",
+				"category": "Qt-Python"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "qt-python.installPySide6",
+					"when": "workspaceFolderCount > 0"
+				},
+				{
+					"command": "qt-python.createUvEnv",
+					"when": "workspaceFolderCount > 0"
+				}
+			]
+		},
+		"taskDefinitions": [
+			{
+				"type": "pyside",
+				"required": [
+					"action"
+				],
+				"properties": {
+					"action": {
+						"type": "string"
+					}
+				}
+			}
+		],
+		"debuggers": [
+			{
+				"type": "pyside",
+				"label": "PySide application",
+				"languages": [
+					"python"
+				],
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"program"
+						],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "Path to the program to be debugged"
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"name": "PySide: Launch",
+						"type": "debugpy",
+						"request": "launch",
+						"program": "${workspaceFolder}/main.py",
+						"preLaunchTask": "PySide: build"
+					}
+				],
+				"configurationSnippets": [
+					{
+						"label": "%qt-python.debug.launch.label%",
+						"description": "%qt-python.debug.launch.description%",
+						"body": {
+							"name": "%qt-python.debug.launch.label%",
+							"type": "debugpy",
+							"request": "launch",
+							"program": "^\"\\${workspaceFolder}/main.py\"",
+							"preLaunchTask": "PySide: build"
+						}
+					}
+				]
+			}
+		],
+		"languages": [
+			{
+				"id": "qt-pysidedeployspec",
+				"configuration": "./res/lang/pysidedeployspec/language-configuration.json",
+				"filenames": [
+					"pysidedeploy.spec"
+				],
+				"aliases": [
+					"Qt PySide6 Deploy Spec"
+				],
+				"icon": {
+					"light": "res/icons/pysidedeployspec-light.svg",
+					"dark": "res/icons/pysidedeployspec-dark.svg"
+				}
+			}
+		],
+		"grammars": [
+			{
+				"language": "qt-pysidedeployspec",
+				"scopeName": "source.qt-pysidedeployspec",
+				"path": "./res/lang/pysidedeployspec/tmLanguage.json"
+			}
+		]
+	},
+	"extensionDependencies": [
+		"theqtcompany.qt-core",
+		"ms-python.python"
+	],
+	"scripts": {
+		"vscode:prepublish": "cross-env NODE_ENV=production node ./esbuild.mjs && git rev-parse HEAD > commit",
+		"compile": "node ./esbuild.mjs",
+		"compile-test": "node ./esbuild.mjs --test",
+		"watch": "node ./esbuild.mjs --watch",
+		"pretest": "npm run compile && npm run lint",
+		"prepare-vsix": "npm --prefix ../qt-core run package",
+		"run-test": "cd ./out/test/ && QT_TEST_QT_ROOT=${npm_config_qt_root:-$QT_TEST_QT_ROOT} node runTest.js",
+		"run-test:only": "cd ./out/test/ && node runTest.js",
+		"test:only": "npm run compile-test && npm run run-test:only",
+		"test": "npm run prepare-vsix && npm run compile-test && npm run run-test",
+		"lint": "npm run prettierWrite && eslint . --fix --cache",
+		"prettierWrite": "npm run prettierBase -- --write \"**/*.{js,ts,json,mjs,cjs}\" --log-level silent",
+		"prettierCheck": "npm run prettierBase -- --check \"**/*.{js,ts,json,mjs,cjs}\"",
+		"prettierBase": "prettier --config \"../common/.prettierrc\" --ignore-path \"../common/.prettierignore\" --cache --cache-strategy metadata",
+		"package": "vsce package --out out && rm commit"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.0",
+		"@eslint/js": "^9.21.0",
+		"@types/chai": "^5.2.3",
+		"@types/command-exists": "^1.2.3",
+		"@types/lodash": "^4.17.16",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^20.17.0",
+		"@types/vscode": "^1.94.0",
+		"@typescript-eslint/eslint-plugin": "^7.6.0",
+		"@typescript-eslint/parser": "^7.6.0",
+		"@vscode/test-electron": "^3.1.0",
+		"@vscode/vsce": "^3.9.1",
+		"chai": "^6.2.2",
+		"cross-env": "^7.0.3",
+		"esbuild": "^0.25.0",
+		"eslint": "^8.57.1",
+		"mocha": "^11.3.0",
+		"prettier": "^3.3.3",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.3"
+	},
+	"dependencies": {
+		"@vscode/python-extension": "^1.0.5",
+		"command-exists": "^1.2.9",
+		"glob": "^12.0.0",
+		"lodash": "^4.17.21",
+		"module-alias": "^2.2.3",
+		"qt-lib": "file:../qt-lib",
+		"smol-toml": "^1.4.1",
+		"typescript": "^5.6.3"
+	},
+	"overrides": {
+		"mocha": {
+			"diff": "^8.0.3",
+			"serialize-javascript": "^7.0.5"
+		}
+	},
+	"__metadata": {
+		"installedTimestamp": 1792027544693,
+		"targetPlatform": "universal",
+		"size": 986492
+	}
+}
