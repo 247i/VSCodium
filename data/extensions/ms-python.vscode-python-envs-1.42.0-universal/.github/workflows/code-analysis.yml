@@ -1,0 +1,59 @@
+name: Code Health Analysis
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  generate-snapshot:
+    name: Generate Code Health Snapshot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Full history for git analysis
+
+      - name: Install Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+
+      - name: Install analysis dependencies
+        working-directory: analysis
+        run: |
+          uv pip install --system .
+
+      - name: Generate snapshot
+        run: |
+          python -m analysis.snapshot --output analysis-snapshot.json
+
+      - name: Upload snapshot artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: code-health-snapshot-${{ github.sha }}
+          path: analysis-snapshot.json
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Print summary
+        run: |
+          echo "## Code Health Snapshot Generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Summary Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          jq -r '.summary | to_entries | .[] | "- **\(.key):** \(.value)"' analysis-snapshot.json >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Top Priority Hotspots" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Changes | Complexity | Priority Score |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------|------------|----------------|" >> $GITHUB_STEP_SUMMARY
+          jq -r '.priority_hotspots[:5] | .[] | "| \(.path) | \(.change_count) | \(.max_complexity) | \(.priority_score) |"' analysis-snapshot.json >> $GITHUB_STEP_SUMMARY
